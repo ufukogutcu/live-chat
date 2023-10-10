@@ -1,8 +1,15 @@
 from flask import Flask
 from routes import main
 
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'secret'
+from events import socketio
 
-app.register_blueprint(main)
+def create_app():
+    app = Flask(__name__)
+    app.config['DEBUG'] = True
+    app.config['SECRET_KEY'] = 'secret'
+
+    app.register_blueprint(main)
+
+    socketio.init_app(app)
+
+    return app
