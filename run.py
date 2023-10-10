@@ -1,4 +1,3 @@
-from app import create_app
+from app import run_app
 
-app = create_app()
-app.run()
+app = run_app()

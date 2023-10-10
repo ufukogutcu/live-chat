@@ -6,14 +6,63 @@
     <title>Live Chat</title>
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 <style>
-
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+    }
 </style>
 </head>
 <body>
-    aaaaaabvbv
-
+    <div id="joinpage">
+        <form>
+            <input id="usernameinput" type="text" placeholder="username" autofocus>
+            <button id="joinbutton">Join</button>
+        </form>
+    </div>
+    <div id="chatpage" style="display: none;">
+        <div id="chat"></div>
+        <form id="messageform">
+            <input id="messageinput" type="text" placeholder="message">
+            <button id="sendbutton" type="submit">Send</button>
+        </form>
+    </div>
 <script>
-    const socket = io();
+    const socketio = io({autoConnect: false});
+
+    document.getElementById("joinbutton").addEventListener("click", (e) => {
+        e.preventDefault();
+
+        let username = document.getElementById("usernameinput").value;
+
+        socketio.connect();
+        socketio.emit("user", username);
+
+        document.getElementById("joinpage").style.display = "none";
+        document.getElementById("chatpage").style.display = "block";
+        document.getElementById("messageinput").focus();
+    })
+
+    document.getElementById("messageform").addEventListener("submit", (e) =>{
+        e.preventDefault()
+
+        let message = document.getElementById("messageinput").value;
+        socketio.emit("message", message)
+
+        document.getElementById("messageinput").value = "";
+    })
+
+    socketio.on("chat", (data) => {
+        let chat = document.getElementById("chat");
+        let message = document.createElement("p");
+        message.appendChild(document.createTextNode(data["username"] + ": " + data["message"]));
+        chat.appendChild(message);
+        chat.scrollTop = chat.scrollHeight;
+    })
+
 </script>
 </body>
 </html>
