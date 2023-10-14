@@ -6,6 +6,17 @@
     <title>Live Chat</title>
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 <style>
+    ::-webkit-scrollbar-thumb {
+        background-color: #3f3f46;
+        border-radius: 20px;
+        border: 6px solid transparent;
+        background-clip: content-box;
+    }
+    
+    ::-webkit-scrollbar {
+        background-color: transparent;
+    }
+    
     @keyframes typing {
         from { width: 0 }
         to { width: 100% }
@@ -14,6 +25,7 @@
     @keyframes blink-caret {
         from, to { border-color: transparent }
         50% { border-color: orange; }
+
     }
     body {
         background: rgb(190,150,133);
@@ -24,6 +36,8 @@
         justify-content: center;
         height: 100vh;
         width: 100vw;
+        padding: 0;
+        margin: 0;
         overflow: hidden;
         font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
     }
@@ -39,6 +53,7 @@
         border-radius: 15px;
         width: 300px;
         height: 200px;
+        overflow: hidden;
     }
 
     #joinpagelabel {
@@ -58,11 +73,22 @@
     }
 
     #usernameinput::placeholder {
-        color: rgba(0, 0, 0, 0.8);
+        color: rgba(0, 0, 0, .8);
     }
 
     #usernameinput:focus {
         outline: solid 2px rgb(85, 55, 41);
+    }
+
+    #usernameinput:-webkit-autofill,
+    #usernameinput:-webkit-autofill:hover,
+    #usernameinput:-webkit-autofill:focus {
+        border: none;
+        -webkit-text-fill-color: black;
+        -webkit-box-shadow: none;
+        outline: solid 2px rgb(85, 55, 41);
+        background-color: rgb(197, 155, 135);
+        transition: background-color 5000s ease-in-out 0s;
     }
     
     #joinbutton {
@@ -73,17 +99,75 @@
     }
 
     #joinbutton:hover {
-        background-color: rgb(122, 122, 122);
+        background-color: rgb(92, 52, 34);
     }
 
     #joinbutton:focus {
         outline: solid 2px rgb(85, 55, 41);
     }
 
+    #chatpage {
+        background-color: rgb(160, 104, 78);
+        position: relative;
+        border: solid 2px black;
+        border-radius: 2%;
+        width: 90vw;
+        max-width: 1200px;
+        height: 90vh;
+        max-height: 1200px;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #chat {
+        position: absolute;
+        top: 2%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        padding: 0;
+        height: calc(100% - 2% - 50px - (1 * 10px));
+        width: 94%;
+        background-color: rgb(197, 155, 135);
+        overflow-y: auto;
+        border-radius: 2%;
+    }
+
+    #message {
+        overflow: hidden;
+        word-wrap: break-word;
+        padding-left: 14px;
+        font-size: large;
+    }
+
+    #messageform {
+        position: absolute;
+        bottom: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 50px;
+        width: 80%;
+        padding: 0;
+        margin: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #messageinput {
+
+    }
+
+    #sendbutton {
+        cursor: pointer;
+
+    }
     
 </style>
 </head>
-<body>
+<body scroll="no">
     <div id="joinpage">
         <label id="joinpagelabel">Please enter a username:</label>
         <form style="display: flex;">
@@ -93,7 +177,7 @@
     </div>
     <div id="chatpage" style="display: none;">
         <div id="chat"></div>
-        <form id="messageform">
+        <form id="messageform" autocomplete="off">
             <input id="messageinput" type="text" placeholder="message">
             <button id="sendbutton" type="submit">Send</button>
         </form>
@@ -114,7 +198,7 @@
         document.getElementById("messageinput").focus();
     })
 
-    document.getElementById("messageform").addEventListener("submit", (e) =>{
+    document.getElementById("sendbutton").addEventListener("click", (e) =>{
         e.preventDefault()
 
         let message = document.getElementById("messageinput").value;
@@ -126,10 +210,25 @@
     socketio.on("chat", (data) => {
         let chat = document.getElementById("chat");
         let message = document.createElement("p");
-        message.appendChild(document.createTextNode(data["username"] + ": " + data["message"]));
+        message.id = "message"
+        let messageText = data["username"] + ": " + data["message"];
+
+        message.appendChild(document.createTextNode(""));
         chat.appendChild(message);
         chat.scrollTop = chat.scrollHeight;
+
+        typeWriter(message, messageText);
     })
+
+    function typeWriter(htmlObject, text, i=0) {
+        if (i < text.length) {
+            htmlObject.innerHTML += text.charAt(i);
+            let chat = document.getElementById("chat");
+            chat.scrollTop = chat.scrollHeight;
+            i++;
+            setTimeout(typeWriter, 30, htmlObject, text, i);
+        }
+    }
 
 </script>
 </body>
