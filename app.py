@@ -3,7 +3,7 @@ from routes import main
 
 from events import socketio
 
-def run_app():
+def create_app():
     app = Flask(__name__)
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'secret'
@@ -12,4 +12,4 @@ def run_app():
 
     socketio.init_app(app)
 
-    socketio.run(app)
+    return app
