@@ -147,7 +147,7 @@
         left: 50%;
         transform: translateX(-50%);
         height: 50px;
-        width: 80%;
+        width: 100%;
         padding: 0;
         margin: 0;
 
@@ -157,12 +157,32 @@
     }
 
     #messageinput {
+        width: 90%;
+        background-color: rgb(197, 155, 135);
+        border-radius: 4px;
+    }
 
+    #messageinput::placeholder {
+        color: rgba(0, 0, 0, .8);
+    }
+
+    #messageinput:focus {
+        outline: solid 2px rgb(85, 55, 41);
     }
 
     #sendbutton {
+        background-color: rgb(119, 72, 50);
+        border-radius: 4px;
         cursor: pointer;
+        font-weight: bold;
+    }
 
+    #sendbutton:hover {
+        background-color: rgb(92, 52, 34);
+    }
+
+    #sendbutton:focus {
+        outline: solid 2px rgb(85, 55, 41);
     }
     
 </style>
@@ -179,7 +199,7 @@
         <div id="chat"></div>
         <form id="messageform" autocomplete="off">
             <input id="messageinput" type="text" placeholder="message">
-            <button id="sendbutton" type="submit">Send</button>
+            <button id="sendbutton" type="submit">↵</button>
         </form>
     </div>
 <script>
